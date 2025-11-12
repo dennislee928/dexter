@@ -69,6 +69,30 @@ No additional changes are required beyond setting `OPENAI_API_KEY`.
 
 3. (Optional) If you keep LocalAI behind a proxy or need authentication, set `LOCALAI_API_KEY`.
 
+### Local Web 控制台（Next.js）
+
+Dexter 內建一個 Next.js Web 介面，可在本機操作 LocalAI：
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+瀏覽器開啟 `http://localhost:3000` 即可使用。預設會連線至 `http://localhost:9015/v1`，可透過 `.env.local` 覆寫：
+
+```
+LOCALAI_BASE_URL=http://localhost:9015/v1
+LOCALAI_API_KEY=localai
+```
+
+Web 介面提供：
+- 模型列表與切換
+- System Prompt 編輯
+- LocalAI 對話視窗與對話歷史
+- 檔案上傳代理
+- 基本使用統計（訊息數、估計 tokens、檔案數）
+
 ### Usage
 
 Run Dexter in interactive mode:
