@@ -12,15 +12,13 @@ RUN apt-get update && apt-get install -y \
 # Install uv for faster dependency management
 RUN pip install --no-cache-dir uv
 
-# Copy dependency files
+# Copy dependency files and source code (needed for editable install)
 COPY pyproject.toml uv.lock* ./
+COPY src/ ./src/
+COPY tests/ ./tests/
 
 # Install Python dependencies using uv
 RUN uv pip install --system --no-cache -e .
-
-# Copy source code
-COPY src/ ./src/
-COPY tests/ ./tests/
 
 # Set Python path
 ENV PYTHONPATH=/app/src

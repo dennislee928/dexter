@@ -120,7 +120,7 @@ docker-compose down
 ```
 
 服務端點：
-- **前端 GUI**: http://localhost:3000
+- **前端 GUI**: http://localhost:3002（如果 3000 被佔用，可在 `docker-compose.yml` 中修改端口映射）
 - **LocalAI API**: http://localhost:9015/v1
 - **後端 CLI**: 透過 `docker-compose exec backend dexter-agent` 執行
 

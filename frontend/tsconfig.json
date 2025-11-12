@@ -17,7 +17,7 @@
     "esModuleInterop": true,
     "jsx": "preserve",
     "incremental": true,
-    "types": ["jest", "node"]
+    "types": ["node"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
