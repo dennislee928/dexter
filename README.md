@@ -22,7 +22,8 @@ Dexter takes complex financial questions and turns them into clear, step-by-step
 
 - Python 3.10 or higher
 - [uv](https://github.com/astral-sh/uv) package manager
-- OpenAI API key (get [here](https://platform.openai.com/api-keys))
+- Docker (required when running LocalAI locally)
+- OpenAI API key (get [here](https://platform.openai.com/api-keys)) **or** a LocalAI container
 - Financial Datasets API key (get [here](https://financialdatasets.ai))
 
 ### Installation
@@ -43,10 +44,30 @@ uv sync
 # Copy the example environment file
 cp env.example .env
 
-# Edit .env and add your API keys
-# OPENAI_API_KEY=your-openai-api-key
-# FINANCIAL_DATASETS_API_KEY=your-financial-datasets-api-key
+# Edit .env and add your API keys or LocalAI settings
 ```
+
+#### Using OpenAI (default)
+
+No additional changes are required beyond setting `OPENAI_API_KEY`.
+
+#### Using LocalAI
+
+1. Launch LocalAI (example with Docker):
+   ```bash
+   docker run -ti --name local-ai -p 9015:8080 -e THREADS=16 localai/localai:latest
+   ```
+   LocalAI exposes an OpenAI-compatible API on `http://localhost:9015/v1` by default.
+
+2. Update your `.env`:
+   ```
+   LLM_PROVIDER=localai
+   LOCALAI_BASE_URL=http://localhost:9015/v1
+   # Optional: override the default model exposed by LocalAI
+   # LOCALAI_MODEL=phi-3-mini
+   ```
+
+3. (Optional) If you keep LocalAI behind a proxy or need authentication, set `LOCALAI_API_KEY`.
 
 ### Usage
 

@@ -50,3 +50,6 @@ yarn-error.log*
 
 # Cursor files
 .cursor/
+
+# Snyk Security Extension - AI Rules (auto-generated)
+.cursor\rules\snyk_rules.mdc
