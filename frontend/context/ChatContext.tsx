@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from "react";
 
 import { fetchModels, sendChatCompletion, uploadFileToLocalAI } from "@/lib/api";
 import { estimateTokenUsage } from "@/lib/tokens";

@@ -93,6 +93,44 @@ Web 介面提供：
 - 檔案上傳代理
 - 基本使用統計（訊息數、估計 tokens、檔案數）
 
+### Docker Compose 部署
+
+Dexter 提供完整的 Docker Compose 設定，可一鍵啟動 LocalAI、後端與前端服務：
+
+```bash
+# 建立 .env 檔案（參考 env.example）
+cp env.example .env
+
+# 編輯 .env，設定必要的環境變數
+# LLM_PROVIDER=localai
+# LOCALAI_API_KEY=localai-docker
+# FINANCIAL_DATASETS_API_KEY=your-key-here
+
+# 啟動所有服務
+docker-compose up -d
+
+# 查看服務狀態
+docker-compose ps
+
+# 查看日誌
+docker-compose logs -f
+
+# 停止所有服務
+docker-compose down
+```
+
+服務端點：
+- **前端 GUI**: http://localhost:3000
+- **LocalAI API**: http://localhost:9015/v1
+- **後端 CLI**: 透過 `docker-compose exec backend dexter-agent` 執行
+
+Docker Compose 包含三個服務：
+1. **localai**: LocalAI 服務（使用官方 image `localai/localai:latest`）
+2. **backend**: Dexter Python 後端（從 `Dockerfile.backend` 構建）
+3. **frontend**: Next.js Web 介面（從 `frontend/Dockerfile` 構建）
+
+所有服務會自動等待 LocalAI 健康檢查通過後才啟動，確保依賴順序正確。
+
 ### Usage
 
 Run Dexter in interactive mode:

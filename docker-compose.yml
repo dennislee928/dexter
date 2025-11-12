@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  localai:
+    image: localai/localai:latest
+    container_name: dexter-localai
+    ports:
+      - "9015:8080"
+    volumes:
+      - localai-models:/models
+    environment:
+      - MODELS_PATH=/models
+      - THREADS=16
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: dexter-backend
+    volumes:
+      - ./src:/app/src:ro
+      - ./tests:/app/tests:ro
+      - ./.env:/app/.env:ro
+    environment:
+      - LLM_PROVIDER=localai
+      - LOCALAI_BASE_URL=http://localai:8080/v1
+      - LOCALAI_API_KEY=${LOCALAI_API_KEY:-localai-docker}
+      - LOCALAI_MODEL=${LOCALAI_MODEL:-gpt-4.1-mini}
+      - FINANCIAL_DATASETS_API_KEY=${FINANCIAL_DATASETS_API_KEY:-}
+    depends_on:
+      localai:
+        condition: service_healthy
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: dexter-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - LOCALAI_BASE_URL=http://localai:8080/v1
+      - LOCALAI_API_KEY=${LOCALAI_API_KEY:-localai-docker}
+      - NODE_ENV=production
+    depends_on:
+      localai:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', (r) => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  localai-models:
+    driver: local
+
+networks:
+  default:
+    name: dexter-network
+
