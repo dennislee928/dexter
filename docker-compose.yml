@@ -9,6 +9,8 @@ services:
     environment:
       - MODELS_PATH=/models
       - THREADS=16
+      - BACKEND=llama
+      - DEBUG=true
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/"]
