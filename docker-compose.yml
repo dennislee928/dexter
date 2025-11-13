@@ -1,6 +1,6 @@
 services:
   localai:
-    image: localai/localai:latest
+    image: localai/localai:latest-aio-cpu
     container_name: dexter-localai
     ports:
       - "9015:8080"
@@ -9,7 +9,6 @@ services:
     environment:
       - MODELS_PATH=/models
       - THREADS=16
-      - BACKEND=llama
       - DEBUG=true
     restart: unless-stopped
     healthcheck:
