@@ -49,8 +49,22 @@ export async function POST(request: Request) {
     });
 
     if (!response.ok) {
-      const message = await response.text();
-      return NextResponse.json({ error: message || "LocalAI 回應失敗" }, { status: response.status });
+      let errorMessage = "LocalAI 回應失敗";
+      try {
+        const errorData = await response.json();
+        if (errorData.error) {
+          errorMessage = typeof errorData.error === "string" 
+            ? errorData.error 
+            : errorData.error.message || JSON.stringify(errorData.error);
+        } else {
+          errorMessage = JSON.stringify(errorData);
+        }
+      } catch {
+        const text = await response.text();
+        errorMessage = text || errorMessage;
+      }
+      console.error("[Chat API] LocalAI error:", errorMessage);
+      return NextResponse.json({ error: errorMessage }, { status: response.status });
     }
 
     const completion = (await response.json()) as { choices?: LocalAIChoice[] };
