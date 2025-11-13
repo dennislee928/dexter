@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       }))
     ];
 
-    const response = await localAiFetch("/chat/completions", {
+    const response = await localAiFetch("/v1/chat/completions", {
       method: "POST",
       body: JSON.stringify({
         model: body.model,
