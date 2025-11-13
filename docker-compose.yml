@@ -47,7 +47,7 @@ services:
     ports:
       - "3002:3000"
     environment:
-      - LOCALAI_BASE_URL=http://localai:8080/v1
+      - LOCALAI_BASE_URL=http://localai:8080
       - LOCALAI_API_KEY=${LOCALAI_API_KEY:-localai-docker}
       - NODE_ENV=production
     depends_on:

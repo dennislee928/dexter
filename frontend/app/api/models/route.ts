@@ -11,7 +11,8 @@ type LocalAIModel = {
 
 export async function GET() {
   try {
-    const response = await localAiFetch("/models", {
+    // Use /v1/models for OpenAI-compatible API
+    const response = await localAiFetch("/v1/models", {
       method: "GET",
       headers: {
         Accept: "application/json"

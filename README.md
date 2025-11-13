@@ -131,6 +131,82 @@ Docker Compose 包含三個服務：
 
 所有服務會自動等待 LocalAI 健康檢查通過後才啟動，確保依賴順序正確。
 
+#### 配置 LocalAI 模型
+
+LocalAI 需要模型文件才能運作。有幾種方式可以添加模型：
+
+**方法 1：手動下載模型文件（最可靠）**
+
+```bash
+# 1. 下載模型文件（.gguf 格式）到 LocalAI 的模型目錄
+# 例如：下載 phi-3-mini 模型（約 2.3GB）
+docker-compose exec localai wget -O /models/phi-3-mini.gguf \
+  https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-gguf/resolve/main/Phi-3-mini-4k-instruct-q4_K_M.gguf
+
+# 2. 創建模型配置文件
+docker-compose exec localai sh -c 'cat > /models/phi-3-mini.yaml << EOF
+name: phi-3-mini
+parameters:
+  model: phi-3-mini.gguf
+  context_size: 4096
+  f16: true
+  threads: 4
+  stopwords:
+    - "<|end|>"
+    - "<|endoftext|>"
+EOF'
+
+# 3. 重啟 LocalAI 以載入新模型
+docker-compose restart localai
+
+# 4. 驗證模型是否載入成功
+docker-compose exec localai curl http://localhost:8080/v1/models
+```
+
+**其他推薦的小型模型：**
+- **TinyLlama** (約 637MB): `https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf`
+- **Phi-2** (約 1.6GB): `https://huggingface.co/microsoft/phi-2-gguf/resolve/main/phi-2.Q4_K_M.gguf`
+
+**方法 2：手動下載模型到 volume**
+
+```bash
+# 查看模型 volume 位置
+docker volume inspect dexter_localai-models
+
+# 下載模型文件（.gguf 格式）到 volume
+# 例如：下載 phi-3-mini 模型
+docker-compose exec localai wget -O /models/phi-3-mini.gguf \
+  https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-gguf/resolve/main/Phi-3-mini-4k-instruct-q4_K_M.gguf
+
+# 創建模型配置文件
+docker-compose exec localai sh -c 'cat > /models/phi-3-mini.yaml << EOF
+name: phi-3-mini
+parameters:
+  model: phi-3-mini.gguf
+  context_size: 4096
+  f16: true
+  threads: 4
+EOF'
+```
+
+**方法 3：使用預配置的模型目錄**
+
+將模型文件直接複製到 Docker volume：
+
+```bash
+# 掛載本地模型目錄（修改 docker-compose.yml）
+# volumes:
+#   - ./models:/models  # 替換 localai-models volume
+```
+
+下載完成後，重啟 LocalAI 服務：
+
+```bash
+docker-compose restart localai
+```
+
+然後在前端界面（http://localhost:3002）應該能看到可用的模型列表。
+
 ### Usage
 
 Run Dexter in interactive mode:
